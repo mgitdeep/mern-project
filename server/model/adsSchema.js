@@ -22,7 +22,7 @@ const adsSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    urll: {
+    image: {
         type: String,
         required: true
     },

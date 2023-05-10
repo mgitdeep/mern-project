@@ -12,11 +12,12 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { storage } from './firebase';
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage"
+
+// Firebase imports
+// import { storage } from './firebase';
+// import { ref, uploadBytes, getDownloadURL } from "firebase/storage"
 
 // Creating the context to send the Image!
-
 // const adImage = createContext()
 
 const Ad = () => {
@@ -27,7 +28,8 @@ const Ad = () => {
     price: "",
     isFree: '', 
     condition: "", 
-    urll: "", 
+    // urll: "", 
+    image: "",
     location: "", 
     description: "", 
     advertiser_info: "", 
@@ -35,40 +37,43 @@ const Ad = () => {
   })
 
   const [isFree, setIsFree] = useState(false)
-  const [urll, setUrll] = useState(null)
+  const [adImage, setAdImage] = useState(null)
+  // const [urll, setUrll] = useState(null)
 
   // Uploading image to Firebase
-  const [imagE, setImagE] = useState(null)
-  const [imageUrl, setImageUrl] = useState(null)
+  // const [imagE, setImagE] = useState(null)
+  // const [imageUrl, setImageUrl] = useState(null)
 
-  const upload = () => {
-    if (imagE == null) {
-      return
-    } else {
-      // const imageRef = storage.ref(`/image/${imagE.name}`).put(imagE).on("State changed", alert("Success"), alert)
 
-      const imageRef = ref(storage, `image/${imagE.name}`)
+  // as we're now going to use Multer, so commenting out this firebase storage code
+  // const upload = () => {
+  //   if (imagE == null) {
+  //     return
+  //   } else {
+  //     // const imageRef = storage.ref(`/image/${imagE.name}`).put(imagE).on("State changed", alert("Success"), alert)
 
-      uploadBytes(imageRef, imagE).then(() => {
-        getDownloadURL(imageRef).then((url) => {
-          console.log(url)
-          setImageUrl(url)
+  //     const imageRef = ref(storage, `image/${imagE.name}`)
 
-          //from here we're sending the image url to DB
-          setUrll(imageUrl)
+  //     uploadBytes(imageRef, imagE).then(() => {
+  //       getDownloadURL(imageRef).then((url) => {
+  //         console.log(url)
+  //         setImageUrl(url)
+
+  //         //from here we're sending the image url to DB
+  //         setUrll(imageUrl)
           
-        }).catch((err) => {
-          console.log(err)
-        })
-        // setImagE(e.target.files[0])
-      }).catch((err) => {
-        console.log(err)
-      })
+  //       }).catch((err) => {
+  //         console.log(err)
+  //       })
+  //       // setImagE(e.target.files[0])
+  //     }).catch((err) => {
+  //       console.log(err)
+  //     })
       
-      // imageRef()
-    }
-    // setImagE(e.target.files[0])
-  }
+  //     // imageRef()
+  //   }
+  //   // setImagE(e.target.files[0])
+  // }
 
   const navigateToMyProfile = useNavigate()
 
@@ -79,15 +84,16 @@ const Ad = () => {
     value = e.target.value
     
     // setAd({...ad, urll: imageUrl})
-    setAd({...ad, [name] : value, urll: imageUrl})
+    setAd({...ad, [name] : value})
   }
 
   const handleAdPost = async (f) => {
     f.preventDefault()
 
-    const {name, category, price, condition, location, description, advertiser_info, contact_info} = ad
+    const {name, category, price, condition, image, location, description, advertiser_info, contact_info} = ad
 
-    if (!name || !category || !price || !condition || !location || !description || !advertiser_info || !contact_info) {
+    // if (!name || !category || !price || !condition || !image || !location || !description || !advertiser_info || !contact_info) {
+      if (name && category && price && condition && image && location && description && advertiser_info && contact_info) {
       toast.error("Please enter all details!")
     } else {
 
@@ -97,7 +103,7 @@ const Ad = () => {
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          name, category, price, isFree, condition, urll, location, description, advertiser_info, contact_info
+          name, category, price, isFree, condition, image, location, description, advertiser_info, contact_info
       })
       })
 
@@ -110,9 +116,9 @@ const Ad = () => {
         window.alert("Ad posted successfully!")
         console.log("Ad posted successfully!")
 
-        upload()
+        // upload()
   
-        // navigateToMyProfile("/myprofile")
+        navigateToMyProfile("/myprofile")
       }
     }
     
@@ -130,7 +136,7 @@ const Ad = () => {
           <div className={styles.form}>
             {/* <img src={imageUrl} alt="ad" /> */}
             <h2>Product Ad</h2>
-            <form method="POST">
+            <form method="POST" encType="multipart/form-data">
               
               {/* <p>
               <label>Product_Name</label> */}
@@ -171,8 +177,9 @@ const Ad = () => {
 
               <p>
               <label htmlFor="img">Select image:</label>
-              <input type="file" id="img" name="image" accept="image/*" 
-              onChange={(e) => {setImagE(e.target.files[0])}}/>
+              <input type="file" id="img" name="adImage"
+              onChange={(e) => setAdImage(e.target.files[0])}
+              />
               
               {/* <button onClick={upload}>Upload</button> */}
               {/* <input type="submit" /> */}

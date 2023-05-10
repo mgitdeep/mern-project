@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const app = express();
+const cors = require('cors');
 // const port = 3000;
 // const Ads = require('./model/adsSchema')
 
@@ -19,6 +20,14 @@ require('./db/conn')
 
 // This commad will let our server understand that user is sending JSON data - will give "undefined" if not use this line
 app.use(express.json())
+app.use(express.static('public'))
+
+// const User = require('./model/userSchema')
+// const Ads = require('./model/adsSchema')
+
+// app.get('/ads', (req, res) => {
+//     res.send('Hello World!')
+// }
 
 
 // Must write these codes to connect both Front & Back end - without these command you'll get for eg: o	POST http://localhost:3000/ad 404 (Not Found) 

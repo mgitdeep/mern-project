@@ -2,12 +2,29 @@
 const express = require('express')
 const router = express.Router()
 const bcrypt = require('bcryptjs')
-const jwt = require('jsonwebtoken')
-const authenticate = require('../middleware/authenticate')
+// const jwt = require('jsonwebtoken')
+// const authenticate = require('../middleware/authenticate')
+
+// // multer requirements
+// const multer = require('multer')
+// const path = require('path')
 
 // Require to send the cookie from front end to backend
 const cookieParser = require("cookie-parser")
 router.use(cookieParser())
+
+// // setting up the multer middleware
+// const storage = multer.diskStorage({
+//     destination: (req, file, cb) => {
+//         cb(null, './AdImages')
+//     },
+//     filename: (req, file, cb) => {
+//         console.log(file)
+//         cb(null, Date.now() + path.extname(file.originalname))
+//     }
+// })
+
+// const upload = multer({ storage: storage })
 
 
 require('../db/conn')
@@ -25,7 +42,7 @@ router.post("/register", async(req, res) => {
     const {email, password, cpassword} = req.body
 
     if (!email || !password || !cpassword) {
-        return res.status(422).json({ error: "Please fill up the rest!"})
+        return res.status(422).json({ message: "Please fill up the rest!"})
     }
 
     try {
@@ -33,10 +50,10 @@ router.post("/register", async(req, res) => {
 
         if (userExists) {
             console.log("Email already exist :(")
-            return res.status(422).json({ error: "Email already exist :("})
+            return res.status(422).json({ message: "Email already exist :("})
         } else if (password != cpassword) {
             console.log("Passwords are not matching :(")
-            return res.status(422).json({ error: "Passwords are not matching :("})
+            return res.status(422).json({ message: "Passwords are not matching :("})
         } else {
             const user = new Users({email, password, cpassword})
 
@@ -121,11 +138,24 @@ router.post('/signin', async(req, res) => {
 
 // My Profile page:
 // Here we're using the Middleware concept
-router.get("/myprofile", authenticate, (req, res, next) => {
+// router.get("/myprofile", authenticate, (req, res, next) => {
+//     console.log('Inside the About section')                 
+//     // next() - you're using this NEXT() function in a wrong way - we've to use this function while defining the MIDDLEWARE, not while using the MIDDLEWARE!!
+//     // res.send("Hello.. I'm a bot from About server");
+//     res.send(req.rootUser);
+// });
+
+router.get("/myprofile", (req, res) => {
     console.log('Inside the About section')                 
-    next();
     // res.send("Hello.. I'm a bot from About server");
-    res.send(req.rootUser);
+    // res.send(req.rootUser);
 });
+
+
+// router.post("/ad", upload.single('adImage'), (req, res, next) => {
+//     console.log('Inside posting an Ad section')
+
+//     next()
+// })
 
 module.exports = router

@@ -9,7 +9,7 @@ import Card from '../../components/card/Card'
 
 // firebase
 // import firebase from 'firebase/compat/app';
-import 'firebase/compat/storage'
+// import 'firebase/compat/storage'
 
 // const storageRef = firebase.storage().ref();
 // const imageRef = storageRef.child("image/txtt.png")
